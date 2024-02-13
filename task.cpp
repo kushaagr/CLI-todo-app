@@ -57,6 +57,13 @@ enum ERRORS {
     NO_TASK_DONE
 };
 
+inline std::string trim(std::string& str)
+{
+    str.erase(str.find_last_not_of(' ')+1);         //suffixing spaces
+    str.erase(0, str.find_first_not_of(' '));       //prefixing spaces
+    return str;
+}
+
 
 class ITaskList {
 protected:
@@ -133,7 +140,7 @@ public:
             return Task(-1, "");
         
 
-        cout << listsz << Nl;
+        // cout << listsz << Nl;
         
         auto it = pendingTasks.begin();
         int i = 1;
@@ -142,12 +149,19 @@ public:
             i = pic.index;
         }
 
-        cout << i << " " << index << Nl;
+        // cout << i << " " << index << Nl;
+        // cout << "pic.it = " << *(&(pic.it)) << Nl;
+
+        // std::printf("pic.it = %lld", pic.it);
+        // std::printf("\t it = %lld", it);
+
 
         while (i++ < index) it++;
-        this->pic = Itercache(it, i);
+        this->pic = Itercache(it, i-1);
         // return *it;
 
+        // std::printf("\n it = %lld", it);
+        
         // cout << " ---" << it->priority << " " << it->value << Nl;
 
         // return it;
@@ -189,9 +203,10 @@ public:
         /* Lower number first */
         std::list<Task>::reverse_iterator tail = pendingTasks.rbegin();
         std::list<Task>::iterator head = pendingTasks.begin();
-        if (pendingTasks.empty() || tail->priority < t.priority) {
+        if (pendingTasks.empty() || tail->priority <= t.priority) {
             pendingTasks.push_back(t);
-        } else if (head->priority > t.priority) {
+        // } else if (head->priority > t.priority) {
+        } else if (t.priority < head->priority) {
             pendingTasks.push_front(t);
         } else {
 
@@ -201,14 +216,16 @@ public:
                 // if (head != pendingTasks.end()) break;
                 if (head == pendingTasks.end()) 
                     break;
-                if (head->priority < t.priority) 
+                if (head->priority > t.priority) 
                     break;
                 prev = head;
                 ++head;
             }
             // pendingTasks.insert_after(prev, t);
-            pendingTasks.insert(prev, t);
+            pendingTasks.insert(head, t);
         }
+        this->pic = Itercache(pendingTasks.begin(), 1);
+
         return true;
     }
 
@@ -225,6 +242,8 @@ public:
         std::list<Task>::iterator it = pendingTasks.begin();
         std::advance(it, index-1);
         pendingTasks.erase(it);
+
+        this->pic = Itercache(pendingTasks.begin(), 1);
 
         // std::list<Task>::iterator cur = pendingTasks.begin();
         // std::list<Task>::iterator prev = cur;
@@ -255,6 +274,8 @@ public:
         std::list<Task>::iterator it = doneTasks.begin();
         std::advance(it, index-1);
         doneTasks.erase(it);
+
+        this->dic = Itercache(doneTasks.begin(), 1);
 
         // std::forward_list<Task>::iterator cur = doneTasks.begin();
         // std::forward_list<Task>::iterator prev = cur;
@@ -294,9 +315,11 @@ public:
 
         std::string line;
         while (std::getline(file, line)) {
-            Task t(0, line);
+            Task t(0, trim(line));
             addToDoneTasks(t);
         }
+
+        this->dic = Itercache(doneTasks.begin(), 1);
 
         return true;
     }
@@ -343,7 +366,7 @@ public:
                 return false;
             }
             std::getline(iss, line);  // Extract value
-            Task t(pri, line);
+            Task t(pri, trim(line));
             addToPendingTasks(t);
         }
         return true;
