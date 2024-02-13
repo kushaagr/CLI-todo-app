@@ -1,4 +1,6 @@
-_todo*
+_task*
+task*
+completed*
 WORKSPACE
 
 # Prerequisites
