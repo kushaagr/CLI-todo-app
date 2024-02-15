@@ -645,6 +645,27 @@ void debug(PriorityTaskList &p) {
     std::cout << "Dlist size " << p.getDoneListSize() << Nl;
 }
 
+std::string get_concatenated_args(int argc, char* argv[]) {
+  // Check if enough arguments are provided
+  if (argc <= 3) {
+    return ""; // Return empty string if not enough arguments
+  }
+
+  // Use a vector to store arguments efficiently
+  std::vector<std::string> args(argv + 3, argv + argc);
+
+  // Join the arguments with spaces using a range-based for loop
+  std::string result;
+  for (const std::string& arg : args) {
+    result += arg + " ";
+  }
+
+  // Remove the trailing space
+  result.pop_back();
+
+  return result;
+}
+
 int main(int argc, char * argv[]) {
 
     // init(argc, argv, "task.txt", "completed.txt");
@@ -688,7 +709,7 @@ int main(int argc, char * argv[]) {
     switch(cmdmap[COMMAND]){
         case ADD:
             
-            return reportError(addTask(&ptl, std::stoi(PRIORITY), TASK, []() {
+            return reportError(addTask(&ptl, std::stoi(PRIORITY), task_input, []() {
                 return g_argc < 4;
             }));
         case DEL:
