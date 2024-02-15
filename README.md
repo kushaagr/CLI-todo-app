@@ -4,7 +4,8 @@
 
 Command line todo app created for [GDC Software Engineering Fellowship](https://fullstack.gdc.network/?utm_source=sendinblue&utm_campaign=GDC_-_Not_Selected&utm_medium=email) program.
 
-*insert gif link*
+## Demo 
+![task-cli-demo](https://github.com/kushaagr/cli-todo/assets/68564934/c30b1454-55c0-416d-9055-ca6f69227501)
 
 ## Build instructions
 + Make sure you have g++ and it compiles to **C++11**
