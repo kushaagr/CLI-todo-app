@@ -41,11 +41,6 @@ struct Task {
 
 typedef std::vector<std::string> strings;
 
-int g_argc;
-strings g_argv;
-std::string g_appname;
-// char * g_taskfile;
-// char * g_donefile;
 
 enum ERRORS { 
     SUCCESS = EXIT_SUCCESS,
@@ -56,6 +51,19 @@ enum ERRORS {
     NO_TASK_DEL,
     NO_TASK_DONE
 };
+
+enum OS {
+    UNIX,
+    WINDOWS
+};
+
+OS g_os;
+int g_argc;
+strings g_argv;
+std::string g_appname, g_cwd;
+// char * g_taskfile;
+// char * g_donefile;
+
 
 inline std::string trim(std::string& str)
 {
@@ -486,13 +494,18 @@ void init(size_t arg_count, char * args[]) {
     size_t pos;
     pos = g_appname.find_last_of('/');
     if (pos != g_appname.npos) {
+        g_os = OS::UNIX;
+        g_cwd = g_appname.substr(0, pos);
         g_appname = g_appname.substr(pos);
     }
     pos = g_appname.find_last_of('\\');
     if (pos != g_appname.npos) {
+        g_os = OS::WINDOWS;
+        g_cwd = g_appname.substr(0, pos);
         g_appname = g_appname.substr(pos);
     }
     
+    // String file extension (.exe or .out)
     pos = g_appname.find_last_of('.');
     if (pos != g_appname.npos) {
         g_appname = g_appname.substr(0, pos);
@@ -514,12 +527,14 @@ ERRORS addTask(PriorityTaskList *p, int priority, std::string input, bool (*miss
     }
 
     
+
+    
     p->loadDataP();
     p->addToPendingTasks(Task(priority, input) );
     p->unloadDataP();
-    std::cout << "Added task: \"" << TASK << "\" with priority " << PRIORITY << Nl;
+    std::cout << "Added task: \"" << input << "\" with priority " << PRIORITY << Nl;
 
-    // std::printf("Added task: \"%s\" with priority %s\n", TASK, PRIORITY);
+    // std::printf("Added task: \"%s\" with priority %s\n", input, PRIORITY);
 
     return ERRORS::SUCCESS;
 }
@@ -704,11 +719,15 @@ int main(int argc, char * argv[]) {
 
     };
 
-    PriorityTaskList ptl("tasks.txt", "completed.txt");
+    std::string tfile, cfile;
+    tfile = (g_os == OS::UNIX) ? (g_cwd + "/tasks.txt") : (g_cwd + "\\tasks.txt");
+    cfile = (g_os == OS::UNIX) ? (g_cwd + "/completed.txt") : (g_cwd + "\\completed.txt");
+
+    PriorityTaskList ptl(tfile, cfile);
+    std::string task_input = get_concatenated_args(argc, argv);
 
     switch(cmdmap[COMMAND]){
         case ADD:
-            
             return reportError(addTask(&ptl, std::stoi(PRIORITY), task_input, []() {
                 return g_argc < 4;
             }));
