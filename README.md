@@ -4,6 +4,18 @@
 
 Command line todo app created for [GDC Software Engineering Fellowship](https://fullstack.gdc.network/?utm_source=sendinblue&utm_campaign=GDC_-_Not_Selected&utm_medium=email) program.
 
+## Usage
+
+```
+Usage :-
+$ .\task add 2 hello world    # Add a new item with priority 2 and text "hello world" to the list
+$ .\task ls                   # Show incomplete priority list items sorted by priority in ascending order
+$ .\task del INDEX            # Delete the incomplete item with the given index
+$ .\task done INDEX           # Mark the incomplete item with the given index as complete
+$ .\task help                 # Show usage
+$ .\task report               # Statistics
+```
+
 ## Demo 
 ![task-cli-demo](https://github.com/kushaagr/cli-todo/assets/68564934/c30b1454-55c0-416d-9055-ca6f69227501)
 

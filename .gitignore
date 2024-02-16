@@ -2,7 +2,7 @@ _task*
 task*
 completed*
 WORKSPACE
-
+debugging
 
 # Prerequisites
 *.d
@@ -36,4 +36,3 @@ WORKSPACE
 *.exe
 *.out
 *.app
-debugging
